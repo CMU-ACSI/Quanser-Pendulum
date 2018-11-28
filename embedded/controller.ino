@@ -20,37 +20,37 @@ www.cmu.edu
 #include <SPI.h>
 #include <math.h>
 
-#include "QUBEServo.h"	// QUBE Servo library
+#include "QUBEServo.h"  // QUBE Servo library
 #include "ACSI_lib.h"
 
 // DECLARE GLOBAL VARIABLES HERE IF NEEDED
 
 // Discrete-time controller (MODIFY THIS FUNCTION)
 void controller_step() {
-	// Accessible global variables:
-	// 		Input variables:
-	//				seconds - (float) Time elapsed since start of program in seconds
-	//				theta - (float) Pendulum angle radians
-	//				alpha - (float) Arm angle in radians
-	// 		Output variables:
-	//				motorVoltage - (float) Signal sent to the motor in Volts
-	//				LEDRed - (float) Red LED intensity on a scale of 0 to 999
-	//				LEDGreen - (float) Green LED intensity on a scale of 0 to 999
-	//				LEDBlue - (float) Blue LED intensity on a scale of 0 to 999
+  // Accessible global variables:
+  //    Input variables:
+  //        seconds - (float) Time elapsed since start of program in seconds
+  //        theta - (float) Pendulum angle radians
+  //        alpha - (float) Arm angle in radians
+  //    Output variables:
+  //        motorVoltage - (float) Signal sent to the motor in Volts
+  //        LEDRed - (float) Red LED intensity on a scale of 0 to 999
+  //        LEDGreen - (float) Green LED intensity on a scale of 0 to 999
+  //        LEDBlue - (float) Blue LED intensity on a scale of 0 to 999
 
-	// Below demonstrates changing the LED state (you probably don't care) 
-	// and changing the motor voltage (you certainly DO care)
-	if (theta <= -(20*M_PI/180.0)) {
-		LEDRed = 999;
-		LEDGreen = 0;
-		LEDBlue = 0;
-		motorVoltage = -1.0;
-	} else if (theta >= (20*M_PI/180.0)) {
-		LEDRed = 0;
-		LEDGreen = 0;
-		LEDBlue = 999;
-		motorVoltage = 1.0;
-	}
+  // Below demonstrates changing the LED state (you probably don't care) 
+  // and changing the motor voltage (you certainly DO care)
+  if (theta <= -(20*M_PI/180.0)) {
+    LEDRed = 999;
+    LEDGreen = 0;
+    LEDBlue = 0;
+    motorVoltage = -1.0;
+  } else if (theta >= (20*M_PI/180.0)) {
+    LEDRed = 0;
+    LEDGreen = 0;
+    LEDBlue = 999;
+    motorVoltage = 1.0;
+  }
 }
 
 // This function will be called once during initialization
@@ -66,11 +66,11 @@ void setup() {
   // Serial Monitor for the data to be displayed properly.)
   Serial.begin(250000);
 
-	// Initialize global variables (CHANGE HYPERPARAMETERS HERE)
-	sampleTime = 0.002;
-	sampleMicros = (unsigned long)sampleTime*1000000;
+  // Initialize global variables (CHANGE HYPERPARAMETERS HERE)
+  sampleTime = 0.002;
+  sampleMicros = (unsigned long)sampleTime*1000000;
 
-	// ADDITIONAL INITIALIZATIONS HERE IF NEEDED (ex: GENERATE REFERENCE OFFLINE)
+  // ADDITIONAL INITIALIZATIONS HERE IF NEEDED (ex: GENERATE REFERENCE OFFLINE)
 
 }
 
@@ -89,17 +89,17 @@ void loop() {
   if (currentMicros - previousMicros >= sampleTime*1000000) {
     previousMicros = previousMicros + sampleTime*1000000;
 
-		// Read data into global variables. For variable definitions, see above comments.
-		readSensors();
+    // Read data into global variables. For variable definitions, see above comments.
+    readSensors();
 
-		// This will define the data that will be displayed at the serial terminal.
-		displayData.buildString(theta, alpha, currentSense, moduleID, moduleStatus);
+    // This will define the data that will be displayed at the serial terminal.
+    displayData.buildString(theta, alpha, currentSense, moduleID, moduleStatus);
 
-		// Run discrete controller timestep
-		controller_step();
+    // Run discrete controller timestep
+    controller_step();
 
-		// Write the data to the Qube servo
-		driveMotor();
+    // Write the data to the Qube servo
+    driveMotor();
   }
 
   // Print data to the Arduino Serial Monitor in between SPI transactions

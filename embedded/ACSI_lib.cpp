@@ -65,85 +65,85 @@ int moduleID = 0;
 Display displayData;
 
 void readSensors() {
-	// update time
-	seconds = seconds + sampleTime;
+  // update time
+  seconds = seconds + sampleTime;
 
   // initialize the SPI bus using the defined speed, data order and data mode
-	SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE2));
-	// take the slave select pin low to select the device
-	digitalWrite(slaveSelectPin, LOW);
-	
-	// send and receive the data via SPI (except for the motor command, which is sent after the pendulum control code) 
-	moduleIDMSB = SPI.transfer(mode);                    // read the module ID MSB, send the mode
-	moduleIDLSB = SPI.transfer(0);                       // read the module ID LSB
-	encoder0Byte[2] = SPI.transfer(writeMask);           // read encoder0 byte 2, send the write mask
-	encoder0Byte[1] = SPI.transfer(LEDRedMSB);           // read encoder0 byte 1, send the red LED MSB
-	encoder0Byte[0] = SPI.transfer(LEDRedLSB);           // read encoder0 byte 0, send the red LED LSB
-	encoder1Byte[2] = SPI.transfer(LEDGreenMSB);         // read encoder1 byte 2, send the green LED MSB
-	encoder1Byte[1] = SPI.transfer(LEDGreenLSB);         // read encoder1 byte 1, send the green LED LSB
-	encoder1Byte[0] = SPI.transfer(LEDBlueMSB);          // read encoder1 byte 0, send the blue LED MSB
-	tach0Byte[2] = SPI.transfer(LEDBlueLSB);             // read tachometer0 byte 2, send the blue LED LSB
-	tach0Byte[1] = SPI.transfer(encoder0ByteSet[2]);     // read tachometer0 byte 1, send encoder0 byte 2
-	tach0Byte[0] = SPI.transfer(encoder0ByteSet[1]);     // read tachometer0 byte 0, send encoder0 byte 1
-	moduleStatus = SPI.transfer(encoder0ByteSet[0]);     // read the status, send encoder0 byte 0
-	currentSenseMSB = SPI.transfer(encoder1ByteSet[2]);  // read the current sense MSB, send encoder1 byte 2
-	currentSenseLSB = SPI.transfer(encoder1ByteSet[1]);  // read the current sense LSB, send encoder1 byte 1
-	SPI.transfer(encoder1ByteSet[0]);                    // send encoder1 byte 0
-	
-	// combine the received bytes to assemble the sensor values
+  SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE2));
+  // take the slave select pin low to select the device
+  digitalWrite(slaveSelectPin, LOW);
+  
+  // send and receive the data via SPI (except for the motor command, which is sent after the pendulum control code) 
+  moduleIDMSB = SPI.transfer(mode);                    // read the module ID MSB, send the mode
+  moduleIDLSB = SPI.transfer(0);                       // read the module ID LSB
+  encoder0Byte[2] = SPI.transfer(writeMask);           // read encoder0 byte 2, send the write mask
+  encoder0Byte[1] = SPI.transfer(LEDRedMSB);           // read encoder0 byte 1, send the red LED MSB
+  encoder0Byte[0] = SPI.transfer(LEDRedLSB);           // read encoder0 byte 0, send the red LED LSB
+  encoder1Byte[2] = SPI.transfer(LEDGreenMSB);         // read encoder1 byte 2, send the green LED MSB
+  encoder1Byte[1] = SPI.transfer(LEDGreenLSB);         // read encoder1 byte 1, send the green LED LSB
+  encoder1Byte[0] = SPI.transfer(LEDBlueMSB);          // read encoder1 byte 0, send the blue LED MSB
+  tach0Byte[2] = SPI.transfer(LEDBlueLSB);             // read tachometer0 byte 2, send the blue LED LSB
+  tach0Byte[1] = SPI.transfer(encoder0ByteSet[2]);     // read tachometer0 byte 1, send encoder0 byte 2
+  tach0Byte[0] = SPI.transfer(encoder0ByteSet[1]);     // read tachometer0 byte 0, send encoder0 byte 1
+  moduleStatus = SPI.transfer(encoder0ByteSet[0]);     // read the status, send encoder0 byte 0
+  currentSenseMSB = SPI.transfer(encoder1ByteSet[2]);  // read the current sense MSB, send encoder1 byte 2
+  currentSenseLSB = SPI.transfer(encoder1ByteSet[1]);  // read the current sense LSB, send encoder1 byte 1
+  SPI.transfer(encoder1ByteSet[0]);                    // send encoder1 byte 0
+  
+  // combine the received bytes to assemble the sensor values
 
-	/*Module ID*/
-	moduleID = (moduleIDMSB << 8) | moduleIDLSB;
-	
-	/*Motor Encoder Counts*/
-	long encoder0 = ((long)encoder0Byte[2] << 16) | (long)(encoder0Byte[1] << 8) | encoder0Byte[0];
-	if (encoder0 & 0x00800000) {
-		encoder0 = encoder0 | 0xFF000000;
-	}
-	// convert the arm encoder counts to angle theta in radians
-	theta = (float)encoder0 * (-2.0 * M_PI / 2048);
+  /*Module ID*/
+  moduleID = (moduleIDMSB << 8) | moduleIDLSB;
+  
+  /*Motor Encoder Counts*/
+  long encoder0 = ((long)encoder0Byte[2] << 16) | (long)(encoder0Byte[1] << 8) | encoder0Byte[0];
+  if (encoder0 & 0x00800000) {
+    encoder0 = encoder0 | 0xFF000000;
+  }
+  // convert the arm encoder counts to angle theta in radians
+  theta = (float)encoder0 * (-2.0 * M_PI / 2048);
 
-	/*Pendulum Encoder Counts*/
-	long encoder1 = ((long)encoder1Byte[2] << 16) | (long)(encoder1Byte[1] << 8) | encoder1Byte[0];
-	if (encoder1 & 0x00800000) {
-		encoder1 = encoder1 | 0xFF000000;
-	}
-	// wrap the pendulum encoder counts when the pendulum is rotated more than 360 degrees
-	encoder1 = encoder1 % 2048;
-	if (encoder1 < 0) {
-		encoder1 = 2048 + encoder1;
-	}    
-	// convert the pendulum encoder counts to angle alpha in radians
-	alpha = (float)encoder1 * (2.0 * M_PI / 2048) - M_PI;
+  /*Pendulum Encoder Counts*/
+  long encoder1 = ((long)encoder1Byte[2] << 16) | (long)(encoder1Byte[1] << 8) | encoder1Byte[0];
+  if (encoder1 & 0x00800000) {
+    encoder1 = encoder1 | 0xFF000000;
+  }
+  // wrap the pendulum encoder counts when the pendulum is rotated more than 360 degrees
+  encoder1 = encoder1 % 2048;
+  if (encoder1 < 0) {
+    encoder1 = 2048 + encoder1;
+  }    
+  // convert the pendulum encoder counts to angle alpha in radians
+  alpha = (float)encoder1 * (2.0 * M_PI / 2048) - M_PI;
 
-	/*Current Sense Value*/
-	currentSense = (currentSenseMSB << 8) | currentSenseLSB;
+  /*Current Sense Value*/
+  currentSense = (currentSenseMSB << 8) | currentSenseLSB;
 }
 
 void driveMotor() {
-	// convert the analog value to the PWM duty cycle that will produce the same average voltage
-	float motorPWM = motorVoltage * (625.0 / 15.0);
-	
-	int motor = (int)motorPWM;  // convert float to int (2 bytes)
-	motor = motor | 0x8000;  // motor command MSB must be B1xxxxxxx to enable the amplifier
-	motorMSB = (byte)(motor >> 8);
-	motorLSB = (byte)(motor & 0x00FF);
+  // convert the analog value to the PWM duty cycle that will produce the same average voltage
+  float motorPWM = motorVoltage * (625.0 / 15.0);
+  
+  int motor = (int)motorPWM;  // convert float to int (2 bytes)
+  motor = motor | 0x8000;  // motor command MSB must be B1xxxxxxx to enable the amplifier
+  motorMSB = (byte)(motor >> 8);
+  motorLSB = (byte)(motor & 0x00FF);
     
   // convert the LED intensities to MSB and LSB
-	LEDRedMSB = (byte)(LEDRed >> 8);
-	LEDRedLSB = (byte)(LEDRed & 0x00FF);
-	LEDGreenMSB = (byte)(LEDGreen >> 8);
-	LEDGreenLSB = (byte)(LEDGreen & 0x00FF);
-	LEDBlueMSB = (byte)(LEDBlue >> 8);
-	LEDBlueLSB = (byte)(LEDBlue & 0x00FF);
-	
-	// send the motor data via SPI
-	SPI.transfer(motorMSB);
-	SPI.transfer(motorLSB);
-	
-	// take the slave select pin high to de-select the device
-	digitalWrite(slaveSelectPin, HIGH);
-	SPI.endTransaction();
+  LEDRedMSB = (byte)(LEDRed >> 8);
+  LEDRedLSB = (byte)(LEDRed & 0x00FF);
+  LEDGreenMSB = (byte)(LEDGreen >> 8);
+  LEDGreenLSB = (byte)(LEDGreen & 0x00FF);
+  LEDBlueMSB = (byte)(LEDBlue >> 8);
+  LEDBlueLSB = (byte)(LEDBlue & 0x00FF);
+  
+  // send the motor data via SPI
+  SPI.transfer(motorMSB);
+  SPI.transfer(motorLSB);
+  
+  // take the slave select pin high to de-select the device
+  digitalWrite(slaveSelectPin, HIGH);
+  SPI.endTransaction();
 }
 
 // This function is used to clear the stall error and reset the encoder values to 0.
