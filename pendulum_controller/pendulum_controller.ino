@@ -41,8 +41,8 @@ void controller_step() {
   // Below demonstrates changing the LED state (you probably don't care) 
   // and changing the motor voltage (you certainly DO care)
   if (theta <= -(20*M_PI/180.0)) {
-    LEDRed = 999;
-    LEDGreen = 0;
+    LEDRed = 0;
+    LEDGreen = 999;
     LEDBlue = 0;
     motorVoltage = -1.0;
   } else if (theta >= (20*M_PI/180.0)) {
@@ -67,8 +67,7 @@ void setup() {
   Serial.begin(250000);
 
   // Initialize global variables (CHANGE HYPERPARAMETERS HERE)
-  sampleTime = 0.002;
-  sampleMicros = (unsigned long)sampleTime*1000000;
+  sampleMicros = 2000; // set the sample time in microseconds
 
   // ADDITIONAL INITIALIZATIONS HERE IF NEEDED (ex: GENERATE REFERENCE OFFLINE)
 
@@ -86,8 +85,8 @@ void loop() {
   // occurred is greater than the sample time, start a new SPI transaction
   // (alternatively, use a timer interrupt)
   currentMicros = micros();
-  if (currentMicros - previousMicros >= sampleTime*1000000) {
-    previousMicros = previousMicros + sampleTime*1000000;
+  if (currentMicros - previousMicros >= sampleMicros) {
+    previousMicros = previousMicros + sampleMicros;
 
     // Read data into global variables. For variable definitions, see above comments.
     readSensors();
@@ -107,7 +106,7 @@ void loop() {
   // string at once would exceed the sample time required to balance the pendulum.)
   else {  //We're in between samples
     // Only print if there's a string ready to be printed, and there's enough time before the next SPI transaction
-    if ( (displayData.dDataReady) && (currentMicros - previousMicros <= (sampleTime - 100)) ) {
+    if ( (displayData.dDataReady) && (currentMicros - previousMicros <= (sampleMicros - 100)) ) {
       // If there is room available in the serial buffer, print one character
       if(Serial.availableForWrite() > 0) {
         Serial.print(displayData.dData[displayData.dDataIndex]);

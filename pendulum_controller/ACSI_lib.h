@@ -2,6 +2,8 @@
 24-774 Advanced Control System Integration
 */
 
+#include "QUBEServo.h"
+
 #ifndef ACSI_lib_h
 #define ACSI_lib_h
 
@@ -10,7 +12,8 @@
 extern bool startup;  // true the first time the sketch is run after the Arduino power is cycled or the reset pushbutton is pressed
 
 extern unsigned long previousMicros;  // used to store the last time the SPI data was written
-extern const long sampleTime;  // set the sample time (the interval between SPI transactions) to 1000us = 1ms
+extern unsigned long currentMicros;  // used to store the current time
+extern unsigned long sampleMicros;  // set the sample time (the interval between SPI transactions) to 1000us = 1ms
 
 // set pin 10 as the slave select for the Quanser QUBE
 // (Note that if a different pin is used for the slave select, pin 10 should be set as

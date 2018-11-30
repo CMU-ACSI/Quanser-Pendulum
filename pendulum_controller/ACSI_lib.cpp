@@ -13,8 +13,7 @@ bool startup = true;  // true the first time the sketch is run after the Arduino
 
 unsigned long previousMicros = 0;  // used to store the last time the SPI data was written
 unsigned long currentMicros = 0;
-float sampleTime = 0.005;  // the sample time (the interval between SPI transactions)
-float sampleMicros = 5000;  // the sample time in microseconds
+unsigned long sampleMicros = 5000;  // the sample time in microseconds
 
 // set pin 10 as the slave select for the Quanser QUBE
 // (Note that if a different pin is used for the slave select, pin 10 should be set as
@@ -66,7 +65,7 @@ Display displayData;
 
 void readSensors() {
   // update time
-  seconds = seconds + sampleTime;
+  seconds = seconds + (float)sampleMicros;
 
   // initialize the SPI bus using the defined speed, data order and data mode
   SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE2));
@@ -203,4 +202,3 @@ void resetQUBEServo() {
   writeMask = B00011111;  // enable the motor and LEDs, disable writes to the encoders
   motorMSB = 0x80;  // enable the amplifier
 }
-
