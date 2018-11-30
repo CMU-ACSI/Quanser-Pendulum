@@ -41,15 +41,20 @@ void controller_step() {
   // Below demonstrates changing the LED state (you probably don't care) 
   // and changing the motor voltage (you certainly DO care)
   if (theta <= -(20*M_PI/180.0)) {
-    LEDRed = 0;
-    LEDGreen = 999;
+    LEDRed = 999;
+    LEDGreen = 0;
     LEDBlue = 0;
     motorVoltage = -1.0;
   } else if (theta >= (20*M_PI/180.0)) {
-    LEDRed = 0;
+    LEDRed = 999;
     LEDGreen = 0;
-    LEDBlue = 999;
+    LEDBlue = 0;
     motorVoltage = 1.0;
+  } else {
+    LEDRed = 0;
+    LEDGreen = 999;
+    LEDBlue = 0;
+    motorVoltage = 0.0; 
   }
 }
 
