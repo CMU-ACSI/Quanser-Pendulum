@@ -15,6 +15,19 @@ extern unsigned long previousMicros;  // used to store the last time the SPI dat
 extern unsigned long currentMicros;  // used to store the current time
 extern unsigned long sampleMicros;  // set the sample time (the interval between SPI transactions) to 1000us = 1ms
 
+// global variables for LED intensity (999 is maximum intensity, 0 is off)
+extern int LEDRed;
+extern int LEDGreen;
+extern int LEDBlue;
+
+// Setup global variables for wrap up function
+extern float seconds;
+extern float alpha;  // pendulum angle in radians
+extern float theta;  // arm angle in radians
+extern float motorVoltage;
+extern float currentSense;
+extern int moduleID;
+
 // set pin 10 as the slave select for the Quanser QUBE
 // (Note that if a different pin is used for the slave select, pin 10 should be set as
 // an output to prevent accidentally putting the Arduino UNO into slave mode.)
@@ -43,18 +56,6 @@ extern byte tach0Byte[3];        // arm tachometer
 extern byte moduleStatus;              // module status (the QUBE Servo sends status = 0 when there are no errors)
 extern byte currentSenseMSB;           // motor current sense MSB 
 extern byte currentSenseLSB;           // motor current sense LSB
-
-// global variables for LED intensity (999 is maximum intensity, 0 is off)
-extern int LEDRed;
-extern int LEDGreen;
-extern int LEDBlue;
-
-// Setup global variables for wrap up function
-extern float alpha;  // pendulum angle in radians
-extern float theta;  // arm angle in radians
-extern float currentSense;
-extern int moduleID;
-extern float motorVoltage;
 
 //Setup serial builder
 extern Display displayData;

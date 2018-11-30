@@ -6,7 +6,7 @@
 #include <SPI.h>
 #include <math.h>
 
-#include "ACSI_lib.h"
+#include "ACSI_qube_lib.h"
 #include "QUBEServo.h"
 
 bool startup = true;  // true the first time the sketch is run after the Arduino power is cycled or the reset pushbutton is pressed
@@ -14,6 +14,21 @@ bool startup = true;  // true the first time the sketch is run after the Arduino
 unsigned long previousMicros = 0;  // used to store the last time the SPI data was written
 unsigned long currentMicros = 0;
 unsigned long sampleMicros = 5000;  // the sample time in microseconds
+
+// global variables for LED intensity (999 is maximum intensity, 0 is off)
+int LEDRed = 0;
+int LEDGreen = 0;
+int LEDBlue = 0;
+
+// Setup global variables for wrap up function
+float seconds = 0.0;
+float alpha = 0.0;  // pendulum angle in radians
+float theta = 0.0;  // arm angle in radians
+
+float motorVoltage = 1.0;
+
+float currentSense = 0.0;
+int moduleID = 0;
 
 // set pin 10 as the slave select for the Quanser QUBE
 // (Note that if a different pin is used for the slave select, pin 10 should be set as
@@ -43,22 +58,6 @@ byte tach0Byte[3] = {0,0,0};        // arm tachometer
 byte moduleStatus = 0;              // module status (the QUBE Servo sends status = 0 when there are no errors)
 byte currentSenseMSB = 0;           // motor current sense MSB 
 byte currentSenseLSB = 0;           // motor current sense LSB
-
-// global variables for LED intensity (999 is maximum intensity, 0 is off)
-int LEDRed = 0;
-int LEDGreen = 0;
-int LEDBlue = 0;
-
-// Setup global variables for wrap up function
-float alpha = 0.0;  // pendulum angle in radians
-float theta = 0.0;  // arm angle in radians
-
-float motorVoltage = 1.0;
-
-float seconds = 0.0;
-
-float currentSense = 0.0;
-int moduleID = 0;
 
 //Setup serial builder
 Display displayData;
