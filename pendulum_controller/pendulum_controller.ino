@@ -28,15 +28,15 @@ www.cmu.edu
 // Discrete-time controller
 void controller_step() {  /* MODIFY THIS FUNCTION */
   // Accessible global variables:
-  //    Input variables:
-  //        seconds - (float) Time elapsed since start of program in seconds
-  //        theta - (float) Pendulum angle radians
-  //        alpha - (float) Arm angle in radians
-  //    Output variables:
-  //        motorVoltage - (float) Signal sent to the motor in Volts
-  //        LEDRed - (float) Red LED intensity on a scale of 0 to 999
-  //        LEDGreen - (float) Green LED intensity on a scale of 0 to 999
-  //        LEDBlue - (float) Blue LED intensity on a scale of 0 to 999
+  //    - Input variables
+  //        float seconds;  // Time elapsed since start of program in seconds
+  //        float theta;    // Pendulum angle radians
+  //        float alpha;    // Arm angle in radians
+  //    - Output variables
+  //        float motorVoltage;  // Signal sent to the motor in Volts
+  //        int LEDRed;           // Red LED intensity on a scale of 0 to 999
+  //        int LEDGreen;         // Green LED intensity on a scale of 0 to 999
+  //        int LEDBlue;          // Blue LED intensity on a scale of 0 to 999
 
   // Below demonstrates changing the LED state (you probably don't care) 
   // and changing the motor voltage (you certainly DO care)

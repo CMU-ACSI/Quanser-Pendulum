@@ -13,7 +13,7 @@ bool startup = true;  // true the first time the sketch is run after the Arduino
 
 unsigned long previousMicros = 0;  // used to store the last time the SPI data was written
 unsigned long currentMicros = 0;
-unsigned long sampleMicros = 5000;  // the sample time in microseconds
+unsigned long sampleMicros = 2000;  // the sample time in microseconds
 
 // global variables for LED intensity (999 is maximum intensity, 0 is off)
 int LEDRed = 0;
@@ -64,7 +64,7 @@ Display displayData;
 
 void readSensors() {
   // update time
-  seconds = seconds + (float)sampleMicros;
+  seconds = seconds + (float)sampleMicros/1000000.0;
 
   // initialize the SPI bus using the defined speed, data order and data mode
   SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE2));
