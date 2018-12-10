@@ -30,7 +30,7 @@ void controller_step() {  /* MODIFY THIS FUNCTION */
   // Accessible global variables:
   //    - Input variables
   //        float seconds;  // Time elapsed since start of program in seconds
-  //        float theta;    // Pendulum angle radians
+  //        float theta;    // Pendulum angle in radians
   //        float alpha;    // Arm angle in radians
   //    - Output variables
   //        float motorVoltage;  // Signal sent to the motor in Volts
